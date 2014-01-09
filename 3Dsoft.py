@@ -215,8 +215,6 @@ def main():
     view_matrix = Matrix.look_at(cp, ct, Vector3.unit_y())
     projection_matrix = Matrix.projection()
 
-    import ipdb; ipdb.set_trace()
-
     window = pyglet.window.Window()
 
     pxbuf = image.ImageData(640, 480, "RGBA", None)
