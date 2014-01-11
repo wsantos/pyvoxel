@@ -1,3 +1,4 @@
+#coding:utf-8
 from __future__ import division
 import math
 import itertools
@@ -46,6 +47,18 @@ class Vector3(object):
 
     def __mul__(self, other):
         return (self.x * other.x) + (self.y * other.y) + (self.z * other.z)
+    def transform_coordinate(self,transform_matrix):
+        vect = Vector3()
+        print "==================="
+        print transform_matrix
+        print self
+        a = (self.x * transform_matrix[0][0]) + (self.y * transform_matrix[1][0]) +  (self.z * transform_matrix[2][0]) + transform_matrix[3][0];
+        b = (self.x * transform_matrix[0][1]) + (self.y * transform_matrix[1][1]) +  (self.z * transform_matrix[2][1]) + transform_matrix[3][1];
+        c = (self.x * transform_matrix[0][2]) + (self.y * transform_matrix[1][2]) +  (self.z * transform_matrix[2][2]) + transform_matrix[3][2];
+        print "a=",a,"b=",b,"c=",c
+
+        d = 1.0 / ((self.x * transform_matrix[0][3]) + (self.y * transform_matrix[1][3]) + (self.z * transform_matrix[2][3])+transform_matrix[3][3]);
+        return Vector3(a*d,b*d,c*d)
 
     @classmethod
     def unit_x(cls):
@@ -171,6 +184,7 @@ class Mesh(object):
 class Device(object):
 
     def __init__(self):
+        self.rot = 0.0
         BackBuffer = ctypes.c_ubyte * (640*480*4)
         pxbuf = BackBuffer()
 
@@ -201,7 +215,8 @@ class Device(object):
             self.pxbuf[index + 3] = a
 
         except:
-            print "index:", index
+            pass
+            #print "index:", index
 
     def project(coord, transMat):
         pass
@@ -214,6 +229,8 @@ def main():
 
     view_matrix = Matrix.look_at(cp, ct, Vector3.unit_y())
     projection_matrix = Matrix.projection()
+    world_matrix = Matrix.identity()
+    tm = world_matrix.data * view_matrix.data * projection_matrix.data 
 
     window = pyglet.window.Window()
 
@@ -234,19 +251,34 @@ def main():
     mesh.vertices[6] = Vector3(1, -1, 1)
     mesh.vertices[7] = Vector3(1, -1, -1)
 
-
+    mesh2 = Mesh("Quad", 4)
+    mesh2.vertices[0] = Vector3(-1, 1, 1)
+    mesh2.vertices[1] = Vector3(1, 1, 1)
+    mesh2.vertices[2] = Vector3(-1, -1, 1)
+    mesh2.vertices[3] = Vector3(1, -1, 1)
+    
+    
     #render loop
     @window.event
     def on_draw():
         start = timeit.default_timer()
         window.clear()
+        device.rot += 10.1
+        world_matrix.data[2][2] = device.rot
+        print "rot",device.rot
+        for vertice in mesh.vertices:
+            vertice_tmp = vertice.transform_coordinate(projection_matrix.data)
+            print vertice_tmp
+            x = vertice_tmp.x * 640 + 640/2.0
+            y = -vertice_tmp.y * 480 + 480 /2.0 
+            device.put_pixel(int(x),int(y),0,255,0,0)
+            print "x=",x
+            print "y=",y
+        print "----------------------------------------------------------------"
+        #x = randint(0,640)
+        #y = randint(0,480)
 
-
-
-        x = randint(0,640)
-        y = randint(0,480)
-
-        device.put_pixel(x,y,0,255,0,0)
+        device.put_pixel(5,5,5,255,0,0)
         device.present()
 
         #pxbuf.blit(0, 0)
