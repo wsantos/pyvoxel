@@ -121,7 +121,60 @@ class Matrix(object):
         data[2,2] = (math.cos(rotation.y) * data[2,2])
 
         return Matrix(data)
+    @classmethod    
+    def pitch(cls,rotation):
+        
+        data = Matrix.identity().data
+        
 
+        data[1,1] = (math.cos(rotation.x) * data[1,1])
+        data[1,2] = (math.sin(rotation.x) * data[1,2])
+        data[2,1] = (-math.sin(rotation.x) * data[2,1])
+        data[2,2] = (math.cos(rotation.x) * data[2,2])
+
+        return Matrix(data)
+    @classmethod    
+    def roll(cls,rotation):
+        
+        data = Matrix.identity().data
+        
+        
+        data[0,0] = (math.cos(rotation.z) * data[0,0])
+        data[0,1] = (-math.sin(rotation.z) * data[0,1])
+        data[1,0] = (math.sin(rotation.z) * data[1,0])
+        data[1,1] = (math.cos(rotation.z) * data[1,1])
+
+        return Matrix(data)
+    @classmethod
+    def pyr(cls,rotation):
+        return Matrix.pitch(rotation)*Matrix.yaw(rotation)*Matrix.roll(rotation)
+    """
+     /// <summary>
+        /// Creates a quaternion given a yaw, pitch, and roll value.
+        /// </summary>
+        /// <param name="yaw">The yaw of rotation.</param>
+        /// <param name="pitch">The pitch of rotation.</param>
+        /// <param name="roll">The roll of rotation.</param>
+        /// <param name="result">When the method completes, contains the newly created quaternion.</param>
+        public static void RotationYawPitchRoll(float yaw, float pitch, float roll, out Quaternion result)
+        {
+            float halfRoll = roll * 0.5f;
+            float halfPitch = pitch * 0.5f;
+            float halfYaw = yaw * 0.5f;
+
+            float sinRoll = (float)Math.Sin(halfRoll);
+            float cosRoll = (float)Math.Cos(halfRoll);
+            float sinPitch = (float)Math.Sin(halfPitch);
+            float cosPitch = (float)Math.Cos(halfPitch);
+            float sinYaw = (float)Math.Sin(halfYaw);
+            float cosYaw = (float)Math.Cos(halfYaw);
+
+            result.X = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);
+            result.Y = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);
+            result.Z = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);
+            result.W = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);
+        }
+        """    
     def __mul__(self, other):
 
         data = np.matrix(np.zeros(shape=(4,4)))
