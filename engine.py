@@ -14,7 +14,8 @@ class Mesh(object):
     def __init__(self, name, verticesCount):
         self.vertices = [Vector3()] * verticesCount
         Name = name
-
+        self.rotation = Vector3()
+        
 class Device(object):
 
     def __init__(self):

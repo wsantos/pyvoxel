@@ -52,7 +52,7 @@ class Vector3(object):
         vd = 1.0 / ((self.x * tm.data[0,3]) + (self.y * tm.data[1,3]) + (self.z * tm.data[2,3])+tm.data[3,3])
 
         return Vector3(va*vd,vb*vd, self.z  ) # passin z to debug purpose --vc*vd)
-
+    
     @classmethod
     def unit_x(cls):
         return cls(1.0, .0, .0)
@@ -109,6 +109,18 @@ class Matrix(object):
             [-(camera_pos * xaxis), -(camera_pos * yaxis), -(camera_pos * zaxis), 1],
         ])
         return Matrix(data.T)
+    @classmethod    
+    def yaw(cls,rotation):
+        
+        data = Matrix.identity().data
+        
+
+        data[0,0] = (math.cos(rotation.y) * data[0,0])
+        data[0,2] = (-math.sin(rotation.y) * data[0,2])
+        data[2,0] = (math.sin(rotation.y) * data[2,0])
+        data[2,2] = (math.cos(rotation.y) * data[2,2])
+
+        return Matrix(data)
 
     def __mul__(self, other):
 

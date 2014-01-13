@@ -40,14 +40,17 @@ def main():
     def on_draw():
 
 
-        cp = Vector3(0,0,device.z_cam)
+        cp = Vector3(device.z_cam,0,10.0)
         ct = Vector3(0,0,0)
 
         device.z_cam += 0.01
+        mesh.rotation.x += 0.01
+        mesh.rotation.y += 0.01
 
         view_matrix = Matrix.look_at(cp, ct, Vector3.unit_y())
         projection_matrix = Matrix.projection()
-        world_matrix = Matrix.identity()
+        #world_matrix = Matrix.identity()#chamar funcao yaw aqui que recebe o vetor rotation
+        world_matrix = Matrix.yaw(mesh.rotation)
         #tm = world_matrix * view_matrix * projection_matrix
         tm = projection_matrix * view_matrix * world_matrix
 
