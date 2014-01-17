@@ -5,6 +5,9 @@ import sys
 import timeit
 import pyglet
 
+import glydget
+from functools import partial
+
 #Engine
 from mathy import Vector3, Matrix
 from engine import Device, Mesh
@@ -34,19 +37,37 @@ def main():
     mesh2.vertices[2] = Vector3(-1, -1, 1)
     mesh2.vertices[3] = Vector3(1, -1, 1)
 
+    cp = Vector3(0.0,0.0,10.0)
+    ct = Vector3(0,0,0)
+
+    #GUI
+    variable = partial(glydget.Variable, namespace=locals())
+    device_gui = glydget.Group('Camera Position', 
+        [variable('cp.x', label=u'x',
+                  vmin=-10, vmax=10, vstep=0.1),
+         variable('cp.y', label=u'y',
+                  vmin=-10,  vmax=10, vstep=0.1),
+         variable('cp.z', label=u'z',
+                  vmin=-10, vmax=10, vstep=0.1)])
+
+    dialog = glydget.Window ("Controls",
+                             [device_gui,
+                              glydget.Button(u'Quit', quit)])
+
+    dialog.show()
+    dialog.move(5, window.height-5)
+    window.push_handlers(dialog)
+    fps_display = pyglet.clock.ClockDisplay()
 
     #render loop
     @window.event
     def on_draw():
 
-
-        cp = Vector3(device.z_cam,0,10.0)
-        ct = Vector3(0,0,0)
-
+        
         #device.z_cam += 0.01
-        mesh.rotation.x += 0.01
-        mesh.rotation.y += 0.01
-        mesh.rotation.z += 0.01
+        #mesh.rotation.x += 0.01
+        #mesh.rotation.y += 0.01
+        #mesh.rotation.z += 0.01
         view_matrix = Matrix.look_at(cp, ct, Vector3.unit_y())
         projection_matrix = Matrix.projection()
         #world_matrix = Matrix.identity()#chamar funcao yaw aqui que recebe o vetor rotation
@@ -80,6 +101,8 @@ def main():
 
         #device.put_pixel(5,5,5,255,0,0)
         device.present()
+        dialog.batch.draw()
+        fps_display.draw()
 
         #pxbuf.blit(0, 0)
 
